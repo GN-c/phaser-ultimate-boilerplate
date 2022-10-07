@@ -1,0 +1,25 @@
+{
+  "name": "phaser3-ultimate-boilerplate",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "@types/fs-extra": "^9.0.13",
+    "@types/node": "^18.8.2",
+    "fs-extra": "^10.1.0",
+    "glsl-optimizer-js": "^0.0.2",
+    "glslify": "^7.1.1",
+    "typescript": "^4.6.4",
+    "vite": "^3.1.0",
+    "vite-tsconfig-paths": "^3.5.1"
+  },
+  "dependencies": {
+    "glsl-blend": "^1.0.3",
+    "phaser": "^3.55.2"
+  }
+}

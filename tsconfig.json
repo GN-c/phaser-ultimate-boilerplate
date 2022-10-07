@@ -1,0 +1,29 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "useDefineForClassFields": true,
+    "module": "ESNext",
+    "lib": ["ESNext", "DOM"],
+    "moduleResolution": "Node",
+    "strict": true,
+    "sourceMap": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "esModuleInterop": true,
+    "noEmit": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noImplicitReturns": true,
+    "skipLibCheck": true,
+    "experimentalDecorators": true,
+    "baseUrl": ".",
+    "paths": {
+      "@GameObjects": ["src/GameObjects/index.ts"],
+      "@Scenes": ["src/Scenes/index.ts"],
+      "@Helpers/*": ["src/Helpers/*"],
+      "@Utils": ["src/Helpers/Utils/index.ts"],
+      "@Game": ["src/index.ts"]
+    }
+  },
+  "include": ["src", "vite-env.d.ts"]
+}
