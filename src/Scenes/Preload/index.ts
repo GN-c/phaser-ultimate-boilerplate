@@ -8,12 +8,15 @@ export class PreloadScene extends BaseScene {
   /**
    * Load Stuff for showing only Loading scene
    */
-  preload() {}
+  preload() {
+    this.load.text("test", "test.json");
+  }
 
   create() {
     /**
      * Start next scene
      */
+    console.log(this.cache.text.get("test"));
     this.scene.start("Game");
   }
 }

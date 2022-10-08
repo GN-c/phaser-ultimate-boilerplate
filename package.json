@@ -12,7 +12,7 @@
     "@types/fs-extra": "^9.0.13",
     "@types/node": "^18.8.2",
     "fs-extra": "^10.1.0",
-    "glsl-optimizer-js": "^0.0.2",
+    "glsl-optimizer-js": "0.0.2",
     "glslify": "^7.1.1",
     "typescript": "^4.6.4",
     "vite": "^3.1.0",
@@ -20,6 +20,7 @@
   },
   "dependencies": {
     "glsl-blend": "^1.0.3",
+    "glsl-unit": "^0.0.7",
     "phaser": "^3.55.2"
   }
 }

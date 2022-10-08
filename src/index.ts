@@ -14,7 +14,7 @@ export default class Game extends Phaser.Game {
         mode: Phaser.Scale.ScaleModes.RESIZE,
       },
       loader: {
-        path: `assets/`,
+        // path: `assets/`,
       },
       scene: [BootScene, PreloadScene, GameScene],
     });

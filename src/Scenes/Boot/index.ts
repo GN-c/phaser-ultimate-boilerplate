@@ -14,6 +14,6 @@ export class BootScene extends BaseScene {
     /**
      * Start next scene
      */
-    this.scene.start("PreLoad");
+    this.scene.start("Preload");
   }
 }

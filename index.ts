@@ -1,2 +1,4 @@
+import "./main.css";
 import Game from "./src";
-console.log(Game);
+
+new Game(document.body);

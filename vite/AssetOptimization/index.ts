@@ -6,35 +6,50 @@ import { JSONHandler, Handler, GLSLHandler } from "./Handlers";
 const handlers: readonly Handler[] = [new JSONHandler(), new GLSLHandler()];
 
 export default function assetOptimizationPlugin(): Plugin {
-  let config: ResolvedConfig, isDevelopment: boolean;
+  let publicDir: string, buildDir: string, isDevelopment: boolean;
 
   return {
     name: "asset-optimization",
     enforce: "post",
-    configResolved(resolvedConfig) {
-      config = resolvedConfig;
-      isDevelopment = config.mode == "development";
+    config(this, config, env) {
+      /**
+       * Get all needed data from config
+       */
+      isDevelopment = env.mode == "development";
+      publicDir = config.publicDir || ".";
+      buildDir = config.build?.outDir || "dist";
+      /**
+       * If in development change static folder path to buildDirectory where optimized assets will be placed
+       * otherwise set to false to disable copying static files by vite
+       */
+      config.publicDir = false; //isDevelopment ? buildDir : false;
     },
-    async writeBundle() {
+    async closeBundle() {
       /** Read directory contents */
-      const files = fs.readdirSync(config.publicDir);
+      const files = fs.readdirSync(publicDir);
       /**
        * Go through each file and transform them
        */
       for await (const file of files) {
-        const absoluteFilePath = path.join(config.publicDir, file);
-        const absoluteTargetFilePath = path.join(config.build.outDir, file);
+        const absoluteFilePath = path.join(publicDir, file);
+        const absoluteTargetFilePath = path.join(buildDir, file);
         const ext = file.slice(file.indexOf("."));
         /** Find appropriate handler */
         const handler = handlers.find((handler) =>
           handler.supportedExtensions.test(ext)
         );
-        if (handler)
-          await handler.handle(
-            isDevelopment,
-            absoluteFilePath,
-            absoluteTargetFilePath
-          );
+        if (handler) {
+          console.log(`Optimizing ${file}`);
+          try {
+            await handler.handle(
+              isDevelopment,
+              absoluteFilePath,
+              absoluteTargetFilePath
+            );
+          } catch (error) {
+            console.log(error);
+          }
+        }
       }
     },
   };

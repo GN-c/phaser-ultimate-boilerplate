@@ -1,49 +1,56 @@
 import { Handler } from "./base";
 import glslify from "glslify";
 import glslOptimizer from "glsl-optimizer-js";
+// import "glsl-unit/demo_site/glslunit-min.js";
 
 export class GLSLHandler extends Handler {
   supportedExtensions = /.glsl/;
-  private readonly delimiter = "---";
 
   async handle(isDevelopment: boolean, srcPath: string, targetPath: string) {
+    /** Read source file */
     const srcGLSL = await this.read(srcPath);
+
     /** Decompose loaded glsl */
-    const { phaserHeaders, GLSLs } = this.decomposePhaserGLSL(srcGLSL);
+    const { phaserHeaders, GLSLs } = this.decomposePhaserBundle(srcGLSL);
+
     /**
      * Compose GLSL Back
      */
     if (isDevelopment)
       await this.write(
         targetPath,
-        this.composePhaserGLSL(
+        this.composePhaserBundle(
           phaserHeaders,
-          /** Transform GLSL code */
+          /**
+           * only run glslify in development mode
+           */
           GLSLs.map((GLSL) => glslify(GLSL))
         )
       );
-    else {
+    else
       await this.write(
         targetPath,
-        this.composePhaserGLSL(
+        this.composePhaserBundle(
           phaserHeaders,
-          /** Transform GLSL code */
-          GLSLs.map(
-            (GLSL) => (
-              console.log("optimized"),
-              this.optimizeGLSL(glslify(GLSL), 2, false)
-            )
-          )
+          /**
+           * Optimize glsl along with glslify
+           */
+          GLSLs.map((GLSL) => this.optimizeGLSL(glslify(GLSL), 2, 0))
         )
       );
-    }
   }
 
+  /**
+   * Optimize GLSL code performance
+   * More details: https://github.com/aras-p/glsl-optimizer
+   *
+   * extract optimize function from wasm
+   */
   private optimizeGLSL = glslOptimizer().cwrap("optimize_glsl", "string", [
     "string",
     "number",
-    "boolean",
-  ]) as (source: string, shaderType: number, vertexShader: boolean) => string;
+    "number",
+  ]) as (source: string, shaderType: number, vertexShader: 0 | 1) => string;
 
   /**
    * Separate phaser headers from shader code
@@ -55,7 +62,8 @@ export class GLSLHandler extends Handler {
    * you can see example here: https://labs.phaser.io/assets/shaders/bundle2.glsl.js
    *
    */
-  private decomposePhaserGLSL(GLSL: string) {
+  private readonly delimiter = "---";
+  private decomposePhaserBundle(GLSL: string) {
     const phaserHeaders: string[] = [];
     const GLSLs: string[] = [];
 
@@ -69,18 +77,22 @@ export class GLSLHandler extends Handler {
           index % 2 ? GLSLs.push(str) : phaserHeaders.push(str)
         );
       return { phaserHeaders, GLSLs };
-    } else return { phaserHeaders: [""], GLSLs: [GLSL] };
+    } else
+    /**
+     * Simply return glsl code directly without headers
+     */
+      return { phaserHeaders: [], GLSLs: [GLSL] };
   }
 
   /**
    * Combine headers and glsl into Phaser acceptable code
    */
-  private composePhaserGLSL(phaserHeaders: string[], GLSLs: string[]) {
+  private composePhaserBundle(phaserHeaders: string[], GLSLs: string[]) {
     /** Check if we have any header at all, since it's not mandatory */
     if (phaserHeaders.length) {
       let GLSL = "";
       for (let i = 0; i < GLSLs.length; i++)
-        GLSL += "---" + phaserHeaders[i] + "---" + GLSLs[i];
+        GLSL += "---\n" + phaserHeaders[i].trim() + "\n---\n" + GLSLs[i].trim();
       return GLSL;
       /** Otherwise simply return glsl code  */
     } else return GLSLs[0];
