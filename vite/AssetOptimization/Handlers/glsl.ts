@@ -1,8 +1,7 @@
 import { Handler } from "./base";
 import glslify from "glslify";
 import glslOptimizer from "glsl-optimizer-js";
-
-// console.log(goog.nodeGlobalRequire(""));
+const { GlslMinify } = require("webpack-glsl-minify/build/minify");
 
 export class GLSLHandler extends Handler {
   supportedExtensions = /.glsl/;
