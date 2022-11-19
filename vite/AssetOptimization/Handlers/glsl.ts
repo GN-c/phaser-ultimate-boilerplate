@@ -1,41 +1,38 @@
 import { Handler } from "./base";
 import glslify from "glslify";
 import glslOptimizer from "glsl-optimizer-js";
-const { GlslMinify } = require("webpack-glsl-minify/build/minify");
+import { GlslMinify } from "webpack-glsl-minify/build/minify";
 
 export class GLSLHandler extends Handler {
   supportedExtensions = /.glsl/;
 
-  async handle(isDevelopment: boolean, srcPath: string, targetPath: string) {
-    /** Read source file */
-    const srcGLSL = await this.read(srcPath);
-
+  async handle(srcGLSL: string) {
     /** Decompose loaded glsl */
     const { phaserHeaders, GLSLs } = this.decomposePhaserBundle(srcGLSL);
 
     /**
      * Compose GLSL Back
      */
-    if (isDevelopment)
-      await this.write(
-        targetPath,
-        this.composePhaserBundle(
-          phaserHeaders,
-          /**
-           * only run glslify in development mode
-           */
-          GLSLs.map((GLSL) => glslify(GLSL))
-        )
+    if (this.isDevelopment)
+      return this.composePhaserBundle(
+        phaserHeaders,
+        /**
+         * only run glslify in development mode
+         */
+        GLSLs.map((GLSL) => glslify(GLSL))
       );
     else
-      await this.write(
-        targetPath,
-        this.composePhaserBundle(
-          phaserHeaders,
-          /**
-           * Optimize glsl along with glslify
-           */
-          GLSLs.map((GLSL) => this.optimizeGLSL(glslify(GLSL), 2, 0))
+      return this.composePhaserBundle(
+        phaserHeaders,
+        /**
+         * GLSLify -> Optimize -> Minify glsl code
+         */
+        await Promise.all(
+          GLSLs.map((GLSL) =>
+            this.minifier
+              .execute(this.optimizeGLSL(glslify(GLSL), 2, 0))
+              .then((shader) => shader.sourceCode)
+          )
         )
       );
   }
@@ -46,11 +43,20 @@ export class GLSLHandler extends Handler {
    *
    * extract optimize function from wasm
    */
-  private optimizeGLSL = glslOptimizer().cwrap("optimize_glsl", "string", [
+  private readonly optimizeGLSL = glslOptimizer().cwrap(
+    "optimize_glsl",
     "string",
-    "number",
-    "number",
-  ]) as (source: string, shaderType: number, vertexShader: 0 | 1) => string;
+    ["string", "number", "number"]
+  ) as (source: string, shaderType: number, vertexShader: 0 | 1) => string;
+
+  /**
+   * GLSL Code Minifier
+   */
+  private readonly minifier = new GlslMinify({
+    preserveUniforms: true,
+    includesOnly: this.isDevelopment,
+    nomangle: ["getSampler", "count"],
+  });
 
   /**
    * Separate phaser headers from shader code

@@ -1,59 +1,33 @@
-import { Plugin, ResolvedConfig } from "vite";
-import fs from "fs-extra";
-import path from "path";
+import { viteStaticCopy } from "vite-plugin-static-copy";
+
 import { JSONHandler, Handler, GLSLHandler } from "./Handlers";
 
-const handlers: readonly Handler[] = [new JSONHandler(), new GLSLHandler()];
+export default function assetOptimizationPlugin() {
+  const isProduction = process.env.NODE_ENV == "production";
+  const handlers: readonly Handler[] = [
+    new JSONHandler(isProduction),
+    new GLSLHandler(isProduction),
+  ];
 
-export default function assetOptimizationPlugin(): Plugin {
-  let publicDir: string, buildDir: string, isDevelopment: boolean;
-
-  return {
-    name: "asset-optimization",
-    enforce: "post",
-    config(this, config, env) {
-      /**
-       * Get all needed data from config
-       */
-      isDevelopment = env.mode == "development";
-      publicDir = config.publicDir || ".";
-      buildDir = config.build?.outDir || "dist";
-      /**
-       * If in development change static folder path to buildDirectory where optimized assets will be placed
-       * otherwise set to false to disable copying static files by vite
-       */
-      config.publicDir = false; //isDevelopment ? buildDir : false;
-    },
-    async closeBundle() {
-      /** Read directory contents */
-      const files = fs.readdirSync(publicDir);
-      /**
-       * Go through each file and transform them
-       */
-      for await (const file of files) {
-        const absoluteFilePath = path.join(publicDir, file);
-        const absoluteTargetFilePath = path.join(buildDir, file);
-        const ext = file.slice(file.indexOf("."));
-        /** Find appropriate handler */
-        const handler = handlers.find((handler) =>
-          handler.supportedExtensions.test(ext)
-        );
-        if (handler) {
-          console.log(`Optimizing ${file}`);
-          try {
-            await handler.handle(
-              isDevelopment,
-              absoluteFilePath,
-              absoluteTargetFilePath
-            );
-          } catch (error) {
-            console.log(`Optimizing ${file} failed: `, error);
-          }
-        } else
-          console.log(
-            `Couldn't find optimizer for ${file}, directly copying it`
+  return viteStaticCopy({
+    targets: [
+      {
+        src: "assets/*",
+        dest: "./",
+        async transform(content, fileName) {
+          /** Find appropriate handler */
+          const handler = handlers.find((handler) =>
+            handler.supportedExtensions.test(fileName)
           );
-      }
-    },
-  };
+          if (handler)
+            try {
+              return await handler.handle(content);
+            } catch {
+              return content;
+            }
+          return content;
+        },
+      },
+    ],
+  });
 }
