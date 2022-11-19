@@ -47,9 +47,12 @@ export default function assetOptimizationPlugin(): Plugin {
               absoluteTargetFilePath
             );
           } catch (error) {
-            console.log(error);
+            console.log(`Optimizing ${file} failed: `, error);
           }
-        }
+        } else
+          console.log(
+            `Couldn't find optimizer for ${file}, directly copying it`
+          );
       }
     },
   };

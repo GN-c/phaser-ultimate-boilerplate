@@ -1,7 +1,8 @@
 import { Handler } from "./base";
 import glslify from "glslify";
 import glslOptimizer from "glsl-optimizer-js";
-// import "glsl-unit/demo_site/glslunit-min.js";
+
+// console.log(goog.nodeGlobalRequire(""));
 
 export class GLSLHandler extends Handler {
   supportedExtensions = /.glsl/;
