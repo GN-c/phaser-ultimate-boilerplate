@@ -13,7 +13,7 @@ export default function assetOptimizationPlugin() {
     targets: [
       {
         src: "assets/*",
-        dest: "./",
+        dest: "./assets/",
         async transform(content, fileName) {
           /** Find appropriate handler */
           const handler = handlers.find((handler) =>
@@ -25,7 +25,26 @@ export default function assetOptimizationPlugin() {
             } catch {
               return content;
             }
-          return content;
+          /** Return null to not copy because of incorrect output format */
+          return null;
+        },
+      },
+      {
+        src: "assets/*",
+        dest: "./assets/",
+        transform: {
+          encoding: "buffer",
+          /**
+           * Copy All non-handler supported stuff
+           */
+          async handler(content, fileName) {
+            /** Find appropriate handler */
+            const handler = handlers.find((handler) =>
+              handler.supportedExtensions.test(fileName)
+            );
+            if (handler) return null;
+            else return content;
+          },
         },
       },
     ],
