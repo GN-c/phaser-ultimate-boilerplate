@@ -12,8 +12,6 @@
     "@types/node": "^18.11.15",
     "@types/webpack": "^5.28.0",
     "copy-webpack-plugin": "^11.0.0",
-    "fs-extra": "^10.1.0",
-    "glsl-blend": "^1.0.3",
     "glsl-optimizer-js": "0.0.2",
     "glslify": "^7.1.1",
     "html-webpack-plugin": "^5.5.0",
