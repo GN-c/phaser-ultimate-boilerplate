@@ -7,8 +7,6 @@ export default class PreloadScene extends BaseScene {
   }
 
   preload() {
-    this.load.json("test");
-    this.load.text("test", "test.glsl");
     this.load.sceneModule("Game");
   }
 

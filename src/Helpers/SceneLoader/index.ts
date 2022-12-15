@@ -14,7 +14,7 @@ declare global {
 }
 
 /**
- * Custom loader to load Web fonts in Phaser way
+ * Custom loader to Code-split and load scene code chunks on demand
  */
 @PhaserUtils.RegisterFileType("sceneModule")
 class SceneModuleFile extends Phaser.Loader.File {
@@ -40,7 +40,7 @@ class SceneModuleFile extends Phaser.Loader.File {
       /**
        * Save to data and trigger onLoad callback
        */
-      .then((SceneClass) => (this.data = SceneClass))
+      .then((SceneClass) => ((this.data = SceneClass), this.onLoad()))
       /**
        * Log Error
        */
