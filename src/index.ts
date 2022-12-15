@@ -1,7 +1,10 @@
 import Phaser from "phaser";
 
-import "@GameObjects";
-import { BootScene, GameScene, PreloadScene } from "@Scenes";
+import "@Helpers/SceneLoader";
+import "@Helpers/WebFontLoader";
+
+import BootScene from "@Scenes/Boot";
+import PreloadScene from "@Scenes/Preload";
 
 export default class Game extends Phaser.Game {
   constructor(parent: HTMLElement) {
@@ -13,7 +16,7 @@ export default class Game extends Phaser.Game {
         parent,
         mode: Phaser.Scale.ScaleModes.RESIZE,
       },
-      scene: [BootScene, PreloadScene, GameScene],
+      scene: [BootScene, PreloadScene],
     });
   }
 }

@@ -1,1 +1,0 @@
-precision mediump float;uniform float size;uniform vec2 resolution;varying vec2 fragCoord;void main(){bool A;A=((float(mod(((fragCoord.y/resolution.y)*size),1.)))>0.5);if(!(A)){mediump vec4 B;B.w=1.;B.xyz=vec3(1.,1.,1.);gl_FragColor=B;};}

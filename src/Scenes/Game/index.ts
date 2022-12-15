@@ -1,6 +1,6 @@
 import BaseScene from "@Helpers/BaseScene";
 
-export class GameScene extends BaseScene {
+export default class GameScene extends BaseScene {
   constructor() {
     super("Game");
   }

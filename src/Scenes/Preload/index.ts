@@ -1,11 +1,16 @@
 import BaseScene from "@Helpers/BaseScene";
+import "@Helpers/SceneLoader";
 
-export class PreloadScene extends BaseScene {
+export default class PreloadScene extends BaseScene {
   constructor() {
     super("Preload");
   }
 
-  preload() {}
+  preload() {
+    this.load.json("test");
+    this.load.text("test", "test.glsl");
+    this.load.sceneModule("Game");
+  }
 
   create() {
     /**

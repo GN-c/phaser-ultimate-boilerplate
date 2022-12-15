@@ -1,29 +1,29 @@
 {
   "compilerOptions": {
-    "target": "ESNext",
-    "useDefineForClassFields": true,
+    "target": "es6",
     "module": "ESNext",
-    "lib": ["ESNext", "DOM"],
     "moduleResolution": "Node",
-    "strict": true,
     "sourceMap": true,
-    "resolveJsonModule": true,
-    "isolatedModules": true,
-    "esModuleInterop": true,
-    "noEmit": true,
-    "noUnusedLocals": true,
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "noImplicitThis": true,
+    "noFallthroughCasesInSwitch": true,
     "noUnusedParameters": true,
-    "noImplicitReturns": true,
-    "skipLibCheck": true,
-    "experimentalDecorators": true,
+    "esModuleInterop": true,
     "baseUrl": ".",
+    "experimentalDecorators": true,
     "paths": {
-      "@GameObjects": ["src/GameObjects/index.ts"],
-      "@Scenes": ["src/Scenes/index.ts"],
+      "@GameObjects/*": ["src/GameObjects/*"],
+      "@Scenes/*": ["src/Scenes/*"],
       "@Helpers/*": ["src/Helpers/*"],
       "@Utils": ["src/Helpers/Utils/index.ts"],
       "@Game": ["src/index.ts"]
     }
   },
-  "include": ["src", "vite-env.d.ts"]
+  "include": ["src"],
+  "ts-node": {
+    "compilerOptions": {
+      "module": "CommonJS"
+    }
+  }
 }

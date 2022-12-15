@@ -1,12 +1,15 @@
 import { Handler } from "./base";
+//@ts-ignore
 import glslify from "glslify";
+//@ts-ignore
 import glslOptimizer from "glsl-optimizer-js";
 import { GlslMinify } from "webpack-glsl-minify/build/minify";
 
 export class GLSLHandler extends Handler {
   supportedExtensions = /.glsl/;
 
-  async handle(srcGLSL: string) {
+  async handle(contentBuffer: Buffer) {
+    const srcGLSL = contentBuffer.toString();
     /** Decompose loaded glsl */
     const { phaserHeaders, GLSLs } = this.decomposePhaserBundle(srcGLSL);
 
@@ -14,24 +17,28 @@ export class GLSLHandler extends Handler {
      * Compose GLSL Back
      */
     if (this.isDevelopment)
-      return this.composePhaserBundle(
-        phaserHeaders,
-        /**
-         * only run glslify in development mode
-         */
-        GLSLs.map((GLSL) => glslify(GLSL))
+      return Buffer.from(
+        this.composePhaserBundle(
+          phaserHeaders,
+          /**
+           * only run glslify in development mode
+           */
+          GLSLs.map((GLSL) => glslify(GLSL))
+        )
       );
     else
-      return this.composePhaserBundle(
-        phaserHeaders,
-        /**
-         * GLSLify -> Optimize -> Minify glsl code
-         */
-        await Promise.all(
-          GLSLs.map((GLSL) =>
-            this.minifier
-              .execute(this.optimizeGLSL(glslify(GLSL), 2, 0))
-              .then((shader) => shader.sourceCode)
+      return Buffer.from(
+        this.composePhaserBundle(
+          phaserHeaders,
+          /**
+           * GLSLify -> Optimize -> Minify glsl code
+           */
+          await Promise.all(
+            GLSLs.map((GLSL) =>
+              this.minifier
+                .execute(this.optimizeGLSL(glslify(GLSL), 2, 0))
+                .then((shader) => shader.sourceCode)
+            )
           )
         )
       );

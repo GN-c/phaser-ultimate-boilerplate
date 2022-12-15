@@ -14,7 +14,7 @@ declare global {
 /**
  * Custom loader to load Web fonts in Phaser way
  */
-PhaserUtils.RegisterFileType("webFont");
+@PhaserUtils.RegisterFileType("webFont")
 class WebFontFile extends Phaser.Loader.File {
   private font?: FontFace;
   constructor(
