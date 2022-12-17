@@ -37,6 +37,7 @@ const config: webpack.Configuration = {
     new webpack.DefinePlugin({
       "typeof WEBGL_RENDERER": JSON.stringify(true),
       "typeof CANVAS_RENDERER": JSON.stringify(false),
+      "typeof WEBGL_DEBUG": JSON.stringify(false),
       "typeof EXPERIMENTAL": JSON.stringify(false),
       "typeof PLUGIN_CAMERA3D": JSON.stringify(false),
       "typeof PLUGIN_FBINSTANT": JSON.stringify(false),
