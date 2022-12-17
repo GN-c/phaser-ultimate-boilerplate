@@ -3,10 +3,12 @@ import webpack from "webpack";
 import TsconfigPathsPlugin from "tsconfig-paths-webpack-plugin";
 import HtmlWebpackPlugin from "html-webpack-plugin";
 import AssetOptimizationPlugin from "./webpack/AssetOptimization";
+import { ESBuildMinifyPlugin } from "esbuild-loader";
 
 const MODE = process.env.WEBPACK_DEV_SERVER ? "development" : "production";
 
 const config: webpack.Configuration = {
+  devtool: "source-map",
   entry: "./index.ts",
   output: {
     path: path.resolve(__dirname, "./dist"),
@@ -16,9 +18,13 @@ const config: webpack.Configuration = {
   module: {
     rules: [
       {
-        test: /\.([cm]?ts|tsx)$/,
-        loader: "ts-loader",
-        exclude: /node_modules/,
+        test: /\.tsx?$/,
+        loader: "esbuild-loader",
+
+        options: {
+          loader: "tsx", // Or 'ts' if you don't need tsx
+          target: "es2015",
+        },
       },
     ],
   },
@@ -33,6 +39,10 @@ const config: webpack.Configuration = {
       path.resolve(__dirname, "./node_modules"),
     ],
   },
+  optimization: {
+    minimizer: [new ESBuildMinifyPlugin({ legalComments: "none" })],
+  },
+
   plugins: [
     new webpack.DefinePlugin({
       "typeof WEBGL_RENDERER": JSON.stringify(true),
