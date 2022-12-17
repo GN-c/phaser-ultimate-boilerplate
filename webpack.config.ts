@@ -8,7 +8,7 @@ import { ESBuildMinifyPlugin } from "esbuild-loader";
 const MODE = process.env.WEBPACK_DEV_SERVER ? "development" : "production";
 
 const config: webpack.Configuration = {
-  devtool: "source-map",
+  devtool: MODE == "development" ? "source-map" : false,
   entry: "./index.ts",
   output: {
     path: path.resolve(__dirname, "./dist"),
@@ -22,7 +22,7 @@ const config: webpack.Configuration = {
         loader: "esbuild-loader",
 
         options: {
-          loader: "tsx", // Or 'ts' if you don't need tsx
+          loader: "tsx",
           target: "es2015",
         },
       },
