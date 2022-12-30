@@ -1,0 +1,33 @@
+package TexturePacker;
+syntax = "proto3";
+
+message Atlas {
+    repeated Texture textures = 1;
+}
+
+message Texture{
+    string image = 1;
+    repeated Frame frames = 2;
+}
+
+message Frame{
+    string filename = 1;
+    bool rotated = 2;
+    bool trimmed = 3;
+    Size sourceSize = 4;
+    Size spriteSourceSize = 5;
+    Size frame = 6;
+    Vector anchor = 7;
+}
+
+message Size{
+    uint32 x = 1;
+    uint32 y = 2;
+    uint32 w = 3;
+    uint32 h = 4;
+}
+
+message Vector{
+    float x = 0;
+    float y = 1;
+}

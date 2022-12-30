@@ -6,7 +6,7 @@ import glslOptimizer from "glsl-optimizer-js";
 import { GlslMinify } from "webpack-glsl-minify/build/minify";
 
 export class GLSLHandler extends Handler {
-  supportedExtensions = /.glsl/;
+  supportedExtension = ".glsl";
 
   async handle(contentBuffer: Buffer) {
     const srcGLSL = contentBuffer.toString();

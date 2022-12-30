@@ -1,10 +1,12 @@
 import CopyPlugin from "copy-webpack-plugin";
-import { JSONHandler, Handler, GLSLHandler } from "./Handlers";
+import { Handler, GLSLHandler } from "./Handlers";
+import { AtlasJSONHandler } from "./Handlers/AtlasJSON";
 
 export default class AssetOptimizationPlugin extends CopyPlugin {
   private handlers: readonly Handler[] = [
-    new JSONHandler(this.mode),
+    // new JSONHandler(this.mode),
     new GLSLHandler(this.mode),
+    new AtlasJSONHandler(this.mode),
   ];
 
   constructor(private readonly mode: "development" | "production") {
@@ -18,7 +20,7 @@ export default class AssetOptimizationPlugin extends CopyPlugin {
              * Find needed handler
              */
             const handler = this.handlers.find((handler) =>
-              handler.supportedExtensions.test(filePath)
+              filePath.endsWith(handler.supportedExtension)
             );
             /**
              * Try running handler if it exists
@@ -27,7 +29,8 @@ export default class AssetOptimizationPlugin extends CopyPlugin {
             if (handler)
               try {
                 return await handler.handle(content);
-              } catch {
+              } catch (error) {
+                console.error(error);
                 return content;
               }
             else return content;

@@ -1,7 +1,7 @@
 import { Handler } from "./base";
 
 export class JSONHandler extends Handler {
-  supportedExtensions = /.json/;
+  supportedExtension = ".json";
 
   async handle(content: Buffer) {
     return this.isDevelopment

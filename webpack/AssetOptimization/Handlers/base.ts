@@ -1,5 +1,5 @@
 export abstract class Handler {
-  public abstract readonly supportedExtensions: RegExp;
+  public abstract readonly supportedExtension: string;
 
   constructor(public readonly mode: "development" | "production") {}
 
