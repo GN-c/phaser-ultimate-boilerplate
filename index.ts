@@ -1,3 +1,3 @@
 import Game from "./src";
 
-new Game(document.body);
+new Game(document.getElementById("test")!);

@@ -5,7 +5,9 @@ import "@Helpers/WebFontLoader";
 
 import BootScene from "@Scenes/Boot";
 import PreloadScene from "@Scenes/Preload";
+import * as Debug from "@Helpers/Debug";
 
+@Debug.Game()
 export default class Game extends Phaser.Game {
   constructor(parent: HTMLElement) {
     super({
