@@ -8,6 +8,7 @@
   },
   "devDependencies": {
     "@tweakpane/core": "^1.1.4",
+    "tweakpane": "^3.1.4",
     "@types/copy-webpack-plugin": "^10.1.0",
     "@types/fs-extra": "^9.0.13",
     "@types/node": "^18.11.15",
@@ -27,7 +28,6 @@
     "webpack-glsl-minify": "^1.5.0"
   },
   "dependencies": {
-    "phaser": "v3.60.0-beta.17",
-    "tweakpane": "^3.1.4"
+    "phaser": "v3.60.0-beta.17"
   }
 }
